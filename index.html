@@ -1,1 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sonic Anarchive</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 3rem;
+      font-family: Helvetica, sans-serif;
+      background-color: white;
+      color: black;
+    }
+
+    h1 {
+      font-size: 3rem;
+      text-transform: uppercase;
+      font-weight: bold;
+      animation: glitch 1.5s infinite;
+    }
+
+    @keyframes glitch {
+      0%   { text-shadow: 2px 0 red, -2px 0 blue; }
+      25%  { text-shadow: -2px 0 red, 2px 0 blue; }
+      50%  { text-shadow: 2px 2px green, -2px -2px magenta; }
+      75%  { text-shadow: -1px 2px yellow, 1px -2px cyan; }
+      100% { text-shadow: none; }
+    }
+
+    p {
+      max-width: 600px;
+      line-height: 1.6;
+    }
+
+    audio {
+      margin-top: 2rem;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <h1>Sonic Anarchive</h1>
+
+  <p>
+    Reactivating protest archives through sound.<br />
+    A speculative site for sonic memory, archival reanimation, and transductive futurity—by interweaving archival recordings with citizen-sourced protest material.
+  </p>
+
+  <audio controls>
+    <source src="your-audio.mp3" type="audio/mpeg" />
+    Your browser does not support the audio element.
+  </audio>
+
+  <script>
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const audioEl = document.querySelector("audio");
+    const track = audioCtx.createMediaElementSource(audioEl);
+    const analyser = audioCtx.createAnalyser();
+    track.connect(analyser).connect(audioCtx.destination);
+
+    const heading = document.querySelector("h1");
+    const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+    function animate() {
+      analyser.getByteFrequencyData(dataArray);
+      const bass = dataArray[0];
+      heading.style.letterSpacing = (bass / 20) + 'px';
+      requestAnimationFrame(animate);
+    }
+
+    audioEl.onplay = () => {
+      audioCtx.resume();
+      animate();
+    };
+  </script>
+</body>
+</html>
 
